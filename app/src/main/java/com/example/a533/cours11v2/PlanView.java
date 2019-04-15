@@ -1,6 +1,8 @@
 package com.example.a533.cours11v2;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -21,6 +23,7 @@ public class PlanView extends View {
     private List<PlanViewDisplayable> objectsToDisplay;
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
+    Bitmap marqueurBitmap;
 
     public PlanView(Context context) {
         super(context);
@@ -41,6 +44,8 @@ public class PlanView extends View {
         objectsToDisplay = new LinkedList<PlanViewDisplayable>();
         scaleGestureDetector = new ScaleGestureDetector(context, new ScaleListener());
         gestureDetector = new GestureDetector(context, new GestureListener());
+        marqueurBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.marqueur);
+        marqueurBitmap = Bitmap.createScaledBitmap(marqueurBitmap, 100, 100, true);
     }
 
     @Override
@@ -101,6 +106,12 @@ public class PlanView extends View {
             currY -= distanceY/zoomLevel;
             invalidate();
             return true;
+        }
+
+        @Override
+        public void onLongPress(MotionEvent e) {
+            addElementToDisplay(new Marqueur(marqueurBitmap, (e.getX()/zoomLevel)+currX-(marqueurBitmap.getWidth()/2), (e.getY()/zoomLevel)-currY-(marqueurBitmap.getHeight()/2)));
+            invalidate();
         }
     }
 }
